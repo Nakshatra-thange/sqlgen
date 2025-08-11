@@ -1,11 +1,17 @@
 # Pydantic request models
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional, Dict, Any
 
 class DatabaseConnectionRequest(BaseModel):
-    name: str
-    connection_string: str
-    database_type: str
+    """Request model for custom database connection"""
+    database_path: str = Field(..., description="Path to SQLite database file")
+    
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "database_path": "/path/to/your/database.db"
+            }
+        }
 
 class SQLGenerationRequest(BaseModel):
     natural_language_query: str

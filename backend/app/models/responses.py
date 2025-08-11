@@ -1,16 +1,67 @@
 # Pydantic response models
 from pydantic import BaseModel
-from typing import List, Dict, Any, Optional
+from typing import Optional, List, Dict, Any
 from datetime import datetime
 
-class DatabaseConnectionResponse(BaseModel):
-    id: int
-    name: str
+class ConnectionInfo(BaseModel):
+    """Database connection information"""
     database_type: str
-    created_at: datetime
+    database_path: str
+    dialect: str
+    tables_count: int
+
+class DatabaseConnectionResponse(BaseModel):
+    """Response model for database connection"""
+    success: bool
+    error: Optional[str] = None
+    connection_info: Optional[ConnectionInfo] = None
     
     class Config:
-        from_attributes = True
+        json_schema_extra = {
+            "example": {
+                "success": True,
+                "error": None,
+                "connection_info": {
+                    "database_type": "sqlite",
+                    "database_path": "chinook.db",
+                    "dialect": "sqlite",
+                    "tables_count": 11
+                }
+            }
+        }
+
+class ConnectionStatusResponse(BaseModel):
+    """Response model for connection status"""
+    connected: bool
+    connection_info: Optional[ConnectionInfo] = None
+
+class TablesResponse(BaseModel):
+    """Response model for database tables"""
+    success: bool
+    error: Optional[str] = None
+    tables: List[str] = []
+    
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "success": True,
+                "error": None,
+                "tables": ["Album", "Artist", "Customer", "Employee", "Genre", "Invoice"]
+            }
+        }
+
+class TestConnectionResponse(BaseModel):
+    """Response model for connection test"""
+    success: bool
+    error: Optional[str] = None
+    
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "success": True,
+                "error": None
+            }
+        }
 
 class SQLGenerationResponse(BaseModel):
     sql: str
